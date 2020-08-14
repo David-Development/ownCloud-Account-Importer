@@ -132,7 +132,7 @@ public class NextcloudRetrofitServiceMethod<T> {
                 rBuilder.setUrl(url.replace(varName, String.valueOf(args[i])));
             } else if(annotation instanceof Header) {
                 Object value = args[i];
-                String key =((Header) annotation).value();
+                String key = ((Header) annotation).value();
                 addHeader(rBuilder, key, value);
             } else if(annotation instanceof FieldMap) {
                 if(args[i] != null) {
@@ -188,13 +188,13 @@ public class NextcloudRetrofitServiceMethod<T> {
                 }
                 //fallback
                 return (T) nextcloudAPI.performRequestObservableV2(typeArgument, request).map(r -> r.getResponse());
-
             } else if(ownerType == Call.class) {
                 Type typeArgument = type.getActualTypeArguments()[0];
                 return (T) Retrofit2Helper.WrapInCall(nextcloudAPI, request, typeArgument);
             }
         } else if(this.returnType == Observable.class) {
-            return (T) nextcloudAPI.performRequestObservableV2(Object.class, request).map(r -> r.getResponse());
+            // Observables without any type information (see above for Observables with type info)
+            return (T) nextcloudAPI.performRequestObservableV2(Void.class, request).map(r -> r.getResponse());
         } else if (this.returnType == Completable.class) {
             return (T) ReactivexHelper.wrapInCompletable(nextcloudAPI, request);
         }
